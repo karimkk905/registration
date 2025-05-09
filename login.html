@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LAU Sign In</title>
+  <style>
+    :root {
+      --lau-green: #006747;
+      --lau-green-dark: #005a3c;
+      --lau-green-light: #e6f2ed;
+      --text-dark: #2d3748;
+      --text-medium: #4a5568;
+      --text-light: #718096;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.2s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    .auth-container {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      margin: 1rem;
+      text-align: center;
+      transition: var(--transition);
+    }
+
+    .auth-container:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .lau-header {
+      margin-bottom: 2rem;
+    }
+
+    .lau-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      color: var(--lau-green);
+      letter-spacing: -0.5px;
+    }
+
+    .lau-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .lau-logo {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--lau-green);
+      margin-bottom: 1.5rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .lau-logo::after {
+      content: '';
+      position: absolute;
+      bottom: -0.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background-color: var(--lau-green);
+      border-radius: 3px;
+    }
+
+    .auth-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      color: var(--text-dark);
+    }
+
+    .instruction {
+      font-size: 0.875rem;
+      color: var(--text-medium);
+      margin-bottom: 1.75rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--text-medium);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      transition: var(--transition);
+      background-color: #f8fafc;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--lau-green);
+      box-shadow: 0 0 0 3px var(--lau-green-light);
+      background-color: white;
+    }
+
+    .form-group input::placeholder {
+      color: #a0aec0;
+      opacity: 1;
+    }
+
+    .forgot-password {
+      text-align: right;
+      margin-top: 0.5rem;
+    }
+
+    .forgot-password a {
+      color: var(--lau-green);
+      text-decoration: none;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
+
+    .auth-button {
+      width: 100%;
+      padding: 0.875rem;
+      background-color: var(--lau-green);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: var(--transition);
+    }
+
+    .auth-button:hover {
+      background-color: var(--lau-green-dark);
+      transform: translateY(-1px);
+    }
+
+    .auth-button:active {
+      transform: translateY(0);
+    }
+
+    .auth-link {
+      margin-top: 1.5rem;
+      font-size: 0.875rem;
+      color: var(--text-medium);
+    }
+
+    .auth-link a {
+      color: var(--lau-green);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .auth-link a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .auth-container {
+        padding: 1.75rem;
+      }
+      
+      .lau-title {
+        font-size: 1.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="lau-header">
+      <div class="lau-title">LAU</div>
+      <div class="lau-subtitle">الجامعة اللبنانية الأمريكية</div>
+      <div class="lau-logo">Lebanese American University</div>
+    </div>
+
+    <div class="auth-title">Sign in</div>
+    <div class="instruction">
+      Please use your LAU e-mail username (only the part before @) and password.
+    </div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="username" autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="password" autocomplete="current-password">
+       
+      </div>
+
+      <button type="submit" class="auth-button">Log In</button>
+    </form>
+
+    <div class="auth-link">
+      Don't have an account? <a href="signup.html">Sign up</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      fetch('http://localhost:8080/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      })
+      .then(response => response.text())
+      .then(data => {
+  if (data === "Login successful!") {
+    localStorage.setItem('username', username);
+    window.location.href = "home.html";
+  } else {
+    alert(data); // Only show alert if login failed
+  }
+})
+
+      .catch(error => {
+        console.error('Error:', error);
+        alert("An error occurred during login.");
+      });
+    });
+  </script>
+</body>
+</html>

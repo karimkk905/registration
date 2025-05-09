@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Courses</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+      font-size: 14px;
+    }
+    th {
+      background-color: #e8eaf6;
+    }
+    .add-classes {
+      margin-top: 40px;
+    }
+    .crn-inputs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .crn-inputs input {
+      width: 60px;
+      height: 25px;
+      text-align: center;
+      border: 1px solid gray;
+    }
+    .buttons {
+      margin-top: 10px;
+    }
+    .buttons button {
+      margin-right: 10px;
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    select {
+      width: 100px;
+      height: 30px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Current Schedule</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>CRN</th>
+      <th>Course Name</th>
+      <th>Course Timing</th>
+      <th>Course Instructor</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="schedule-table">
+    <!-- Courses will load here -->
+  </tbody>
+</table>
+
+<div class="buttons">
+  <button onclick="submitActions()">Submit Actions</button>
+</div>
+
+<div class="add-classes">
+  <h3>Add Classes Worksheet</h3>
+  <div class="crn-inputs" id="crn-inputs">
+    <input type="text" maxlength="5" placeholder="CRN">
+    <input type="text" maxlength="5" placeholder="CRN">
+    <input type="text" maxlength="5" placeholder="CRN">
+    <input type="text" maxlength="5" placeholder="CRN">
+    <input type="text" maxlength="5" placeholder="CRN">
+    <input type="text" maxlength="5" placeholder="CRN">
+    <input type="text" maxlength="5" placeholder="CRN">
+    <input type="text" maxlength="5" placeholder="CRN">
+    <input type="text" maxlength="5" placeholder="CRN">
+    <input type="text" maxlength="5" placeholder="CRN">
+  </div>
+  <div class="buttons">
+    <button onclick="registerCourses()">Submit Changes</button>
+  </div>
+</div>
+
+<script>
+// Assume username is saved in localStorage at login
+const username = localStorage.getItem('username');
+
+async function loadCourses() {
+  try {
+    const response = await fetch(`http://localhost:8080/get-registrations?username=${username}`);
+    const courses = await response.json();
+    const table = document.getElementById('schedule-table');
+    table.innerHTML = '';
+
+    courses.forEach(course => {
+      const row = document.createElement('tr');
+      row.setAttribute('data-crn', course.crn); 
+      row.innerHTML = `
+        <td>${course.crn}</td>
+        <td>${course.courseName}</td>
+        <td>${course.courseTiming}</td>
+        <td>${course.courseInstructor}</td>
+        <td>
+          <select>
+            <option value="none">None</option>
+            <option value="delete">Delete</option>
+          </select>
+        </td>
+      `;
+      table.appendChild(row);
+    });
+  } catch (error) {
+    console.error('Error loading courses:', error);
+  }
+}
+
+async function registerCourses() {
+  const inputs = document.querySelectorAll('#crn-inputs input');
+  const crns = Array.from(inputs)
+    .map(input => input.value.trim())
+    .filter(crn => crn.length === 5);
+
+  if (crns.length === 0) {
+    alert('Please enter at least one valid 5-digit CRN.');
+    return;
+  }
+
+  try {
+    for (const crn of crns) {
+      const courseResponse = await fetch(`http://localhost:8080/check-crn/${crn}`);
+      const courseStatus = await courseResponse.text();
+
+      if (courseStatus !== "exists") {
+        alert(`CRN ${crn} does not exist. Skipping it.`);
+        continue;
+      }
+
+      await fetch(`http://localhost:8080/register-course`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `username=${username}&crn=${crn}`
+      });
+    }
+
+    alert('Finished registering your courses.');
+    inputs.forEach(input => input.value = '');
+    loadCourses();
+
+  } catch (error) {
+    console.error('Error during registration:', error);
+    alert('An error occurred while registering the courses.');
+  }
+}
+
+async function submitActions() {
+  const table = document.getElementById('schedule-table');
+  const rows = table.querySelectorAll('tr');
+
+  for (const row of rows) {
+    const crn = row.getAttribute('data-crn'); 
+    const action = row.cells[4].querySelector('select').value;
+
+    if (action === 'delete') {
+      try {
+        const response = await fetch(`http://localhost:8080/delete-course`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `username=${username}&crn=${crn}`
+        });
+
+        const resultText = await response.text();
+        console.log(`CRN ${crn}: ${resultText}`);
+      } catch (error) {
+        console.error('Error deleting course:', error);
+      }
+    }
+  }
+
+  alert('Finished applying actions.');
+  loadCourses(); // Reload after deletion
+}
+
+window.onload = loadCourses;
+</script>
+
+</body>
+</html>

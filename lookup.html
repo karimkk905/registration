@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Look-up Classes to Add</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h2 {
+      color: rgb(0, 0, 0);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #e8eaf6;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Look-up Classes to Add</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>CRN</th>
+      <th>Course Name</th>
+      <th>Course Timing</th>
+      <th>Course Instructor</th>
+    </tr>
+  </thead>
+  <tbody id="courses-table-body">
+    <!-- Courses will be loaded here -->
+  </tbody>
+</table>
+
+<script>
+  async function loadCourses() {
+    try {
+      const response = await fetch('http://localhost:8080/get-courses');
+      const courses = await response.json();
+
+      const tableBody = document.getElementById('courses-table-body');
+      tableBody.innerHTML = ''; // Clear existing rows
+
+      courses.forEach(course => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${course.crn}</td>
+          <td>${course.courseName}</td>
+          <td>${course.courseTiming}</td>
+          <td>${course.courseInstructor}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+    }
+  }
+
+  window.onload = loadCourses;
+</script>
+
+</body>
+</html>
